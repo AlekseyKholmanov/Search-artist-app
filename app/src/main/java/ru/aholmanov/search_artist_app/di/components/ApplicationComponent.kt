@@ -10,4 +10,6 @@ import javax.inject.Singleton
 @Singleton
 @Component(modules = [ApplicationModule::class])
 interface ApplicationComponent {
+    fun inject(activity: HomeActivity)
+    fun inject(presenter: HomePresenter)
 }

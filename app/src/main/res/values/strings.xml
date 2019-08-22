@@ -6,4 +6,6 @@
 
     <string name="intro_title_3">Let`s go!</string>
     <string name="intro_description_3">И открыть страницу этого артиста на last.fm</string>
+    <string name="autocomlete_hint">print artist name</string>
+    <string name="search_button_text">search</string>
 </resources>
