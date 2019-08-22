@@ -16,9 +16,9 @@
             android:layout_height="50dp"
             android:focusable="true"
             android:focusableInTouchMode="true"
-            android:hint="@string/autocomlete_hint"
+            android:hint="@string/autocomplete_hint"
             android:completionThreshold="2"
-            android:completionHint="competition hint"
+            android:completionHint="@string/autocomplete_competition"
     />
     <Button
             android:id="@+id/search"

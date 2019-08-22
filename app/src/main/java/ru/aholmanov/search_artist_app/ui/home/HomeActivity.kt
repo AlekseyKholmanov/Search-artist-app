@@ -1,11 +1,9 @@
 package ru.aholmanov.search_artist_app.ui.home
 
-import android.annotation.SuppressLint
 import android.content.Intent
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
-import android.util.Log
 import android.widget.ArrayAdapter
 import androidx.appcompat.app.AppCompatActivity
 import com.google.android.material.snackbar.Snackbar
@@ -32,16 +30,19 @@ class HomeActivity : AppCompatActivity(), HomeView {
 
         search.setOnClickListener{
             val artistName = autocompleteInput.text.toString()
-            presenter.openSearchResult(artistName)
+            when {
+                artistName.isEmpty() -> showError("значение не может быть пустым")
+                artist?.name ?: "" == artistName -> startActivity(artist!!.url)
+                else -> showError("значение выбрано не из списка")
+            }
         }
 
         //используется для сравнения соответствует ли последнее выбранное значение - значению в поле
         autocompleteInput.setOnItemClickListener { _, _, position, _ ->
-           presenter.updateArtist( adapter.getItem(position))
+           artist = ( adapter.getItem(position))
         }
     }
 
-    @SuppressLint("CheckResult")
     override fun onResume() {
         super.onResume()
 
@@ -50,7 +51,18 @@ class HomeActivity : AppCompatActivity(), HomeView {
         adapter = ArrayAdapter(this, android.R.layout.simple_dropdown_item_1line, listOf())
         autocompleteInput.setAdapter(adapter)
 
-        presenter.subscriveOnSearch()
+        presenter.subscribeOnSearch()
+    }
+
+    //save artist when device rotate
+    override fun onSaveInstanceState(outState: Bundle?) {
+        super.onSaveInstanceState(outState)
+        outState?.putSerializable("artist", artist)
+    }
+
+    override fun onRestoreInstanceState(savedInstanceState: Bundle?) {
+        super.onRestoreInstanceState(savedInstanceState)
+        artist = savedInstanceState?.getSerializable("artist") as Artist
     }
 
     override fun showError(error: String) {
@@ -63,7 +75,7 @@ class HomeActivity : AppCompatActivity(), HomeView {
         adapter.notifyDataSetChanged()
     }
 
-    override fun startActivity(url: String) {
+    private fun startActivity(url: String) {
         val intent = Intent(applicationContext, SearchResultActivity::class.java)
         intent.putExtra("url", url)
         startActivity(intent)
@@ -72,12 +84,14 @@ class HomeActivity : AppCompatActivity(), HomeView {
     private val textObserver by lazy {
         object : TextWatcher {
             override fun afterTextChanged(s: Editable?) {
-                presenter.getNewWord(s.toString())
+                presenter.sendNextText(s.toString())
             }
             override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {}
         }
     }
+
+    var artist: Artist? = null
 
     @Inject
     lateinit var repository: ArtistRepository

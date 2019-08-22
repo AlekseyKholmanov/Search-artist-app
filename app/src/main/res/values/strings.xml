@@ -1,11 +1,10 @@
 <resources>
     <string name="search_artist_app">search artist</string>
     <string name="intro_title_1">Привет!</string>
-
-    <string name="intro_description_2">Я помогу найти имя нужного артиста</string>
-
     <string name="intro_title_3">Let`s go!</string>
+    <string name="intro_description_2">Я помогу найти имя нужного артиста</string>
     <string name="intro_description_3">И открыть страницу этого артиста на last.fm</string>
-    <string name="autocomlete_hint">print artist name</string>
     <string name="search_button_text">search</string>
+    <string name="autocomplete_hint">print artist name</string>
+    <string name="autocomplete_competition">input artist name</string>
 </resources>

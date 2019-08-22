@@ -25,9 +25,7 @@ class Artist
     val name: String,
     @SerializedName("url")
     val url: String
-
-
-) {
+):Serializable {
     override fun toString(): String {
         return name
     }

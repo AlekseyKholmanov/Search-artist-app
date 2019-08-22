@@ -18,7 +18,7 @@ class HomePresenter(private val view: HomeView) {
     }
 
     @SuppressLint("CheckResult")
-    fun subscriveOnSearch() {
+    fun subscribeOnSearch() {
         subject
             .filter { it.isNotEmpty() }
             .debounce(500, TimeUnit.MILLISECONDS)
@@ -35,26 +35,13 @@ class HomePresenter(private val view: HomeView) {
                 view.updateDropdown(responce)
             }, {
                 Log.d(TAG, it.localizedMessage)
+                view.showError("unexpectedError")
             })
     }
 
-    fun getNewWord(word: String) {
+    fun sendNextText(word: String) {
         subject.onNext(word)
     }
-
-    fun openSearchResult(artistName: String) {
-        when {
-            artistName.isEmpty() -> view.showError("значение не может быть пустым")
-            artist?.name ?: "" == artistName -> view.startActivity(artist!!.url)
-            else -> view.showError("значение выбрано не из списка")
-        }
-    }
-
-    fun updateArtist(artist: Artist?) {
-        this.artist = artist
-    }
-
-    var artist: Artist? = null
 
     private val subject by lazy { PublishSubject.create<String>() }
 
