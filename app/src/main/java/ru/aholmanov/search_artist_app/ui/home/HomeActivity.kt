@@ -23,6 +23,10 @@ class HomeActivity : AppCompatActivity(), HomeView {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         App.component.inject(this)
+
+        //показывать intro только 1 раз
+        preferenceRepository.setIntroIsViewed()
+
         setContentView(R.layout.activity_home)
         presenter = HomePresenter(this)
 
