@@ -4,8 +4,9 @@ import android.content.Intent
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
-import android.widget.ArrayAdapter
+import android.view.View
 import androidx.appcompat.app.AppCompatActivity
+import androidx.recyclerview.widget.LinearLayoutManager
 import com.google.android.material.snackbar.Snackbar
 import kotlinx.android.synthetic.main.activity_home.*
 import ru.aholmanov.search_artist_app.App
@@ -14,9 +15,10 @@ import ru.aholmanov.search_artist_app.model.Artist
 import ru.aholmanov.search_artist_app.repository.ArtistRepository
 import ru.aholmanov.search_artist_app.repository.PreferenceRepository
 import ru.aholmanov.search_artist_app.ui.searchResult.SearchResultActivity
+import java.io.Serializable
 import javax.inject.Inject
 
-class HomeActivity : AppCompatActivity(), HomeView {
+class HomeActivity : AppCompatActivity(), HomeView, ArtistAdapter.ArtistAdapterCallback {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -28,51 +30,49 @@ class HomeActivity : AppCompatActivity(), HomeView {
         setContentView(R.layout.activity_home)
         presenter = HomePresenter(this)
 
-        search.setOnClickListener{
-            val artistName = autocompleteInput.text.toString()
-            when {
-                artistName.isEmpty() -> showError("значение не может быть пустым")
-                artist?.name ?: "" == artistName -> startActivity(artist!!.url)
-                else -> showError("значение выбрано не из списка")
-            }
-        }
-
-        //используется для сравнения соответствует ли последнее выбранное значение - значению в поле
-        autocompleteInput.setOnItemClickListener { _, _, position, _ ->
-           artist = ( adapter.getItem(position))
-        }
+        textInput.addTextChangedListener(textObserver)
+        recycleView.layoutManager = LinearLayoutManager(this)
+        artistAdapter = ArtistAdapter(listItems, this)
+        recycleView.adapter = artistAdapter
     }
 
-    override fun onResume() {
-        super.onResume()
 
-        autocompleteInput.addTextChangedListener(textObserver)
-
-        adapter = ArrayAdapter(this, android.R.layout.simple_dropdown_item_1line, listOf())
-        autocompleteInput.setAdapter(adapter)
-
-        presenter.subscribeOnSearch()
-    }
-
-    //save artist when device rotate
     override fun onSaveInstanceState(outState: Bundle?) {
         super.onSaveInstanceState(outState)
-        outState?.putSerializable("artist", artist)
+        outState?.putSerializable("artists", listItems as Serializable)
     }
 
     override fun onRestoreInstanceState(savedInstanceState: Bundle?) {
         super.onRestoreInstanceState(savedInstanceState)
-        artist = savedInstanceState?.getSerializable("artist") as Artist
+        if (savedInstanceState != null) {
+            val savedArtists = savedInstanceState.getSerializable("artists") as MutableList<*>
+            showArtists(savedArtists as MutableList<Artist>)
+        }
     }
 
-    override fun showError(error: String) {
-        Snackbar.make(homeActivity,error,Snackbar.LENGTH_SHORT).show()
+    override fun showError(error: Int) {
+        Snackbar.make(homeActivity, getString(error), Snackbar.LENGTH_SHORT).show()
     }
 
-    override fun updateDropdown(names: List<Artist>) {
-        adapter = ArrayAdapter(this, android.R.layout.simple_dropdown_item_1line, names)
-        autocompleteInput.setAdapter(adapter)
-        adapter.notifyDataSetChanged()
+    override fun showEmptyPlaceholder() {
+        if (recycleView.visibility != View.GONE) {
+            recycleView.visibility = View.GONE
+            emptyListPlaceholder.visibility = View.VISIBLE
+        }
+    }
+
+    override fun showArtists(artists: MutableList<Artist>) {
+        if (recycleView.visibility != View.VISIBLE) {
+            recycleView.visibility = View.VISIBLE
+            emptyListPlaceholder.visibility = View.GONE
+        }
+        listItems.clear()
+        listItems.addAll(artists)
+        artistAdapter.notifyDataSetChanged()
+    }
+
+    override fun artistClicked(item: Artist) {
+        startActivity(item.url)
     }
 
     private fun startActivity(url: String) {
@@ -91,7 +91,8 @@ class HomeActivity : AppCompatActivity(), HomeView {
         }
     }
 
-    var artist: Artist? = null
+    private lateinit var artistAdapter: ArtistAdapter
+    private var listItems = mutableListOf<Artist>()
 
     @Inject
     lateinit var repository: ArtistRepository
@@ -99,6 +100,5 @@ class HomeActivity : AppCompatActivity(), HomeView {
     @Inject
     lateinit var preferenceRepository: PreferenceRepository
 
-    lateinit var adapter:ArrayAdapter<Artist>
     lateinit var presenter: HomePresenter
 }
