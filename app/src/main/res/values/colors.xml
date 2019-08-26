@@ -3,8 +3,8 @@
     <color name="colorPrimary">#039be5</color>
     <color name="colorPrimaryDark">#006db3</color>
     <color name="colorAccent">#63ccff</color>
-    <color name ="firstFragmenBackground">#5e35b1</color>
-    <color name="secondFragmentBackgound">#8e24aa</color>
+    <color name ="firstFragmentBackground">#5e35b1</color>
+    <color name="secondFragmentBackground">#8e24aa</color>
     <color name="thirdFragmentBackground">#d81b60</color>
     <color name="black">#000000</color>
     <color name="white">#ffffff</color>

@@ -2,9 +2,7 @@ package ru.aholmanov.search_artist_app.ui.intro
 
 import android.animation.ArgbEvaluator
 import android.content.Intent
-import android.graphics.Color
 import android.os.Bundle
-import android.util.Log
 import androidx.appcompat.app.AppCompatActivity
 import androidx.viewpager.widget.ViewPager
 import kotlinx.android.synthetic.main.activity_intro.*
@@ -55,7 +53,7 @@ class IntroActivity : AppCompatActivity(), ViewPager.OnPageChangeListener {
     lateinit var preferenceRepository: PreferenceRepository
 
     private val colors: Array<Int> =
-        arrayOf(R.color.firstFragmenBackground,R.color.secondFragmentBackgound,R.color.thirdFragmentBackground)
+        arrayOf(R.color.firstFragmentBackground,R.color.secondFragmentBackground,R.color.thirdFragmentBackground)
 
     private val evaluator = ArgbEvaluator()
 }

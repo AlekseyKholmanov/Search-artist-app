@@ -18,6 +18,5 @@
             android:background="#00000000"
             app:tabBackground="@drawable/tab_selector"
             app:tabGravity="center"
-            app:tabIndicatorHeight="0dp"
-    />
+            app:tabIndicatorHeight="0dp"/>
 </RelativeLayout>
