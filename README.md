@@ -10,8 +10,8 @@
 - RxJava
 - Retrofit
 
-![First Image](/images/artist_1.png)
-![Second Image](/images/artist_2.png)
-![Third Image](/images/artist_3.png)
+![intro Image](/images/intro.png)
+![main Image](/images/main.png)
+![result Image](/images/result.png)
 
 
